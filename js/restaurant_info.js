@@ -40,7 +40,7 @@ initMap = () => {
     if (error) { // Got an error!
       console.error(error);
     } else {
-      self.map = new google.maps.Map(document.getElementById('map'), {
+      self.map = new maps.Map(document.getElementById('map'), {
         zoom: 16,
         center: restaurant.latlng,
         scrollwheel: false
@@ -80,18 +80,25 @@ fetchRestaurantFromURL = (callback) => {
  * Create restaurant HTML and add it to the webpage
  */
 fillRestaurantHTML = (restaurant = self.restaurant) => {
-  const name = document.getElementById('restaurant-name');
+  const name = document.getElementById("restaurant-name");
   name.innerHTML = restaurant.name;
 
-  const address = document.getElementById('restaurant-address');
+  const address = document.getElementById("restaurant-address");
   address.innerHTML = restaurant.address;
 
-  const image = document.getElementById('restaurant-img');
-  image.className = 'restaurant-img'
+  const image = document.getElementById("restaurant-img");
+  image.className = "restaurant-img";
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
 
-  const cuisine = document.getElementById('restaurant-cuisine');
+  const cuisine = document.getElementById("restaurant-cuisine");
   cuisine.innerHTML = restaurant.cuisine_type;
+
+  // fill operating hours
+  if (restaurant.operating_hours) {
+    fillRestaurantHoursHTML();
+  }
+  // fill reviews
+  fillReviewsHTML();
 
   // fill operating hours
   if (restaurant.operating_hours) {
@@ -125,24 +132,26 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
  * Create all reviews HTML and add them to the webpage.
  */
 fillReviewsHTML = (reviews = self.restaurant.reviews) => {
-  const container = document.getElementById('reviews-container');
-  const title = document.createElement('h2');
-  title.innerHTML = 'Reviews';
+  const container = document.getElementById("reviews-container");
+  const title = document.createElement("h4");
+  /* ACCESSIBILITY SETUP */
+  title.setAttribute("tabindex", "0");
+  /* *** */
+  title.innerHTML = "Reviews";
   container.appendChild(title);
 
   if (!reviews) {
-    const noReviews = document.createElement('p');
-    noReviews.innerHTML = 'No reviews yet!';
+    const noReviews = document.createElement("p");
+    noReviews.innerHTML = "No reviews yet!";
     container.appendChild(noReviews);
     return;
   }
-  const ul = document.getElementById('reviews-list');
+  const ul = document.getElementById("reviews-list");
   reviews.forEach(review => {
     ul.appendChild(createReviewHTML(review));
   });
   container.appendChild(ul);
 }
-
 /**
  * Create review HTML and add it to the webpage.
  */
